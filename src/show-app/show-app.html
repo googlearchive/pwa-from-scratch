@@ -1,0 +1,150 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="show-icons.html">
+<link rel="import" href="show-list-page.html">
+<link rel="import" href="show-video-page.html">
+
+<dom-module id="show-app">
+  <template>
+    <style>
+
+      :host {
+        --paper-icon-button-ink-color: white;
+        display: block;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        padding-top: 64px;
+      }
+
+      app-header {
+        @apply(--layout-fixed-top);
+        z-index: 1;
+        height: 64px;
+        line-height: 64px;
+        background-color: rgba(0, 0, 0, 0.85);
+        border-bottom: 1px solid #222;
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+      }
+
+      a {
+        @apply(--layout-flex-auto);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+        text-decoration: none;
+        color: white;
+        margin-right: 40px;
+      }
+
+      a:hover {
+        color: #ddd;
+      }
+
+      .title {
+        font-size: 14px;
+        margin: 0;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 100;
+        letter-spacing: 5px;
+        word-spacing: 7px;
+        display: inline;
+        margin-left: 20px;
+        margin-right: 20px;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      }
+
+      .chrome-logo {
+        margin-left: 16px;
+        transition: transform 0.2s ease-out;
+      }
+
+      #leftItem {
+        min-width: 40px;
+        color: white;
+      }
+
+      #leftItem:not([icon]) {
+        visibility: hidden;
+      }
+
+      [threshold-triggered] .title {
+        opacity: 0;
+      }
+
+      [threshold-triggered] .chrome-logo {
+        transform: translateX(129px) rotateZ(360deg);
+      }
+
+      @media (max-width: 640px) {
+        .title {
+          font-size: 10px;
+        }
+
+        [threshold-triggered] .chrome-logo {
+          transform: translateX(120px) rotateZ(360deg);
+        }
+      }
+
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <app-header condenses reveals threshold="1">
+      <app-toolbar>
+        <paper-icon-button id="leftItem"></paper-icon-button>
+        <a href="/" title="Developer Channel">
+          <img class="chrome-logo" src="chrome-logo.svg" width="30" height="30">
+          <h1 class="title">Developer Channel</h1>
+        </a>
+      </app-toolbar>
+    </app-header>
+
+    <iron-pages id="pages"
+        role="main"
+        selected="[[routeData.page]]"
+        selected-attribute="active"
+        attr-for-selected="name"
+        fallback-selection="shows">
+      <show-list-page name="shows" subroute="[[subroute]]"></show-list-page>
+      <show-video-page name="video" subroute="[[subroute]]"></show-video-page>
+    </iron-pages>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'show-app',
+
+      listeners: {
+        'setup-toolbar': '_setupToolbar'
+      },
+
+      _setupToolbar: function(e) {
+        this.$.leftItem.onclick = e.detail.leftItemClickAction;
+
+        if (e.detail.leftItemIcon) {
+          this.$.leftItem.setAttribute('icon', e.detail.leftItemIcon);
+        } else {
+          this.$.leftItem.removeAttribute('icon');
+        }
+      }
+
+    });
+
+  </script>
+</dom-module>

@@ -1,0 +1,7 @@
+{
+  "name": "Show app",
+  "short_name": "Show app",
+  "description": "Shows for web developers",
+  "start_url": "/",
+  "display": "standalone"
+}
