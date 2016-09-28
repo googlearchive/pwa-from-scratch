@@ -126,10 +126,10 @@
     </style>
 
     <iron-ajax
-        auto="[[active]]"
+        auto
         url="https://www.googleapis.com/youtube/v3/search?part=snippet&q=[[show.q]]&channelId=UCnUYZLuoy1rq1aVMwx4aTzw&order=date&maxResults=20&pageToken=[[pageToken]]&key=AIzaSyA053VCd78p0v2Pica01W_ljGUSAfzl0vA"
         handle-as="json"
-        on-response="_handleResponse"></iron-ajax>
+        on-response="_onXhrResponse"></iron-ajax>
 
     <iron-media-query
         query="max-width: 1280px"
@@ -232,10 +232,10 @@
       observers: [
         '_updateToolbar(active, smallScreen)'
       ],
-      
+
       _itemSizes: {},
 
-      _handleResponse: function(e) {
+      _onXhrResponse: function(e) {
         var response = e.detail.response;
         var items = response.items;
 
@@ -259,7 +259,6 @@
             this.push('items', item);
           }, this);
         }
-
         this.$.scrollThreshold.clearTriggers();
       },
 
