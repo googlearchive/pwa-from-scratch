@@ -43,8 +43,16 @@
         videoId: {
           type: String,
           computed: '_getVideoId(subroute)'
-        }
+        },
 
+        backAction: {
+          type: Function,
+          value: function() {
+            return function() {
+              window.location.href = '/';
+            };
+          }
+        }
       },
 
       _getVideoId: function(subroute) {
@@ -52,7 +60,7 @@
       },
 
       _leftItemClicked: function() {
-        window.history.back();
+        this.backAction();
       },
 
       _activeDidChange: function(active) {

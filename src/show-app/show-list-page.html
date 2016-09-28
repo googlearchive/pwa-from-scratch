@@ -146,7 +146,7 @@
       </ul>
     </app-drawer>
 
-    <iron-list scroll-target="document" items="[[items]]" grid>
+    <iron-list scroll-target="document" items="[[items]]" grid item-size="_itemSize" on-iron-resize="_onListResize">
       <template>
         <div class="grid-item">
           <a href="/video/[[item.id.videoId]]" style$="background-image:url([[item.snippet.thumbnails.high.url]]);">
@@ -232,6 +232,8 @@
       observers: [
         '_updateToolbar(active, smallScreen)'
       ],
+      
+      _itemSizes: {},
 
       _handleResponse: function(e) {
         var response = e.detail.response;
@@ -291,10 +293,24 @@
 
         this.persistentDrawer = !smallScreen;
         this.openedDrawer = !smallScreen;
+        this._itemSizes = {};
       },
 
       _leftItemClicked: function() {
         this.openedDrawer = true;
+      },
+
+      _itemSize: function(node, isHeight) {
+        if (isHeight) {
+          this._itemSizes.height = this._itemSizes.height || node.offsetHeight;
+          return this._itemSizes.height;
+        }
+        this._itemSizes.width = this._itemSizes.width || node.offsetWidth;
+        return this._itemSizes.width;
+      },
+
+      _onListResize: function() {
+        this._itemSizes = {};
       }
 
     });

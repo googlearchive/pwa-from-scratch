@@ -134,6 +134,10 @@
         'setup-toolbar': '_setupToolbar'
       },
 
+      attached: function() {
+        this.listen(window, 'location-changed', '_onLocationChange');
+      },
+
       _setupToolbar: function(e) {
         this.$.leftItem.onclick = e.detail.leftItemClickAction;
 
@@ -142,6 +146,12 @@
         } else {
           this.$.leftItem.removeAttribute('icon');
         }
+      },
+
+      _onLocationChange: function() {
+        this.$.pages.selectedItem.backAction = function() {
+          window.history.back();
+        };
       }
 
     });
