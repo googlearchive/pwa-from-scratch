@@ -1,0 +1,86 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<!doctype html>
+<html>
+  <head>
+    <title>Chrome developer channel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      Polymer = { lazyRegister: true, dom: 'shadow' };
+    </script>
+    <link rel="manifest" href="/manifest.json">
+
+    <script>
+      // Setup Polymer options
+      window.Polymer = {
+        dom: 'shadow',
+        lazyRegister: true
+      };
+      // Load webcomponentsjs polyfill if browser does not support native Web Components
+      (function() {
+        'use strict';
+        var webComponentsSupported = (
+          'registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')
+        );
+        if (!webComponentsSupported) {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = '/bower_components/webcomponentsjs/webcomponents-lite.js';
+          document.head.appendChild(script);
+        }
+      })();
+      // Load pre-caching Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js');
+        });
+      }
+    </script>
+
+    <link rel="import" href="/src/show-app/show-app.html">
+
+    <style>
+
+      body {
+        margin: 0;
+        background-color: black;
+        background-image: linear-gradient(to bottom, rgb(0, 0, 0) 0%, rgb(50, 50, 50) 50%, rgb(0, 0, 0) 100%);
+        background-attachment: fixed;
+        font-family: 'Roboto', 'Noto', sans-serif;
+      }
+
+      noscript {
+        width: 100vw;
+        height: 100vh;
+        color: white;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <show-app></show-app>
+
+    <noscript>
+      <div>
+        <img src="/images/chrome-logo.svg" width="50" height="50">
+        <p>Please enable javascript to access the channel</p>
+      </div>
+    </noscript>
+
+  </body>
+</html>

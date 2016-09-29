@@ -1,0 +1,203 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="show-icons.html">
+<link rel="import" href="show-list-page.html">
+<link rel="import" href="show-video-page.html">
+
+<dom-module id="show-app">
+  <template>
+    <style>
+
+      :host {
+        --paper-icon-button-ink-color: white;
+        display: block;
+        padding-top: 64px;
+      }
+
+      app-header {
+        @apply(--layout-fixed-top);
+        z-index: 1;
+        height: 64px;
+        line-height: 64px;
+        background-color: rgba(0, 0, 0, 0.85);
+        border-bottom: 1px solid #222;
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+      }
+
+      a {
+        @apply(--layout-flex-auto);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+        text-decoration: none;
+        color: white;
+        margin-right: 40px;
+      }
+
+      a:hover {
+        color: #ddd;
+      }
+
+      .title {
+        font-size: 14px;
+        margin: 0;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: 100;
+        letter-spacing: 5px;
+        word-spacing: 7px;
+        display: inline;
+        margin-left: 20px;
+        margin-right: 20px;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      }
+
+      .chrome-logo {
+        margin-left: 16px;
+        width: 30px;
+        height: 30px;
+        transition: transform 0.2s ease-out;
+      }
+
+      #leftItem {
+        min-width: 40px;
+        color: white;
+      }
+
+      #leftItem:not([icon]) {
+        visibility: hidden;
+      }
+
+      [threshold-triggered] .title {
+        opacity: 0;
+      }
+
+      [threshold-triggered] .chrome-logo {
+        transform: translateX(129px) rotateZ(360deg);
+      }
+
+      @media (max-width: 640px) {
+        .title {
+          font-size: 10px;
+        }
+
+        [threshold-triggered] .chrome-logo {
+          transform: translateX(120px) rotateZ(360deg);
+        }
+      }
+
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+  
+    <app-header condenses reveals threshold="1">
+      <app-toolbar>
+        <paper-icon-button id="leftItem"></paper-icon-button>
+        <a href="/" title="Developer Channel">
+          <svg class="chrome-logo" xmlns="http://www.w3.org/2000/svg" viewBox="15.5 15.5 224.5 224.5">
+            <defs>
+              <radialGradient cy="0" cx="0.5" id="r">
+               <stop stop-color="#f06b59"/>
+               <stop offset="1" stop-color="#df2227"/>
+              </radialGradient>
+              <radialGradient r="0.76" cy="0.3" cx="0.65" id="g">
+               <stop offset="0.65" stop-color="#4cb749"/>
+               <stop offset="1" stop-color="#388b41"/>
+              </radialGradient>
+              <radialGradient r="0.8" cy="0.25" cx="0.36" id="y">
+               <stop offset="0.6" stop-color="#FCD209"/>
+               <stop offset="0.7" stop-color="#f7c616"/>
+               <stop offset="1" stop-color="#bc821e"/>
+              </radialGradient>
+              <radialGradient r="1" cy="0" cx="0.5" spreadMethod="pad" id="cf">
+               <stop offset="0.1" stop-color="#7FB3DF"/>
+               <stop offset="0.9" stop-color="#0F5B94"/>
+              </radialGradient>
+              <radialGradient id="cb" r="1" cy="0" cx="0.5">
+               <stop offset="0" stop-color="#F6F0EE"/>
+               <stop offset="1" stop-color="#ddd"/>
+              </radialGradient>
+            </defs>
+            <path d="m198,148a70,70 0 0 0 -140,0l20,0a50,50 0 0 1 100,0" fill-opacity="0.1"/>
+            <circle r="45" cx="127.5" cy="127.6" fill="url(#cf)" stroke="url(#cb)" stroke-width="9" />
+            <path d="m228,78a112,112 0 0 0 -193,-13l45,78a50,50 0 0 1 47,-65" fill="url(#r)"/>
+            <path d="m35,65a112,112 0 0 0 84,174l47,-80a50,50 0 0 1 -86,-16" fill="url(#g)"/>
+            <path d="m119,239a112,112 0 0 0 109,-161l-101,0a50,50 0 0 1 39,81" fill="url(#y)"/>
+            <path d="m35,65l45,78a50,50 0 0 1 2,-34l-45,-47" opacity="0.075"/>
+            <path d="m119,239l47,-80a50,50 0 0 1 -29,17l-20,63" opacity="0.05"/>
+            <path d="m228,78l-101,0a50,50 0 0 1 39,19l64,-16" opacity="0.05"/>
+          </svg>
+          <h1 class="title">Developer Channel</h1>
+        </a>
+      </app-toolbar>
+    </app-header>
+
+    <iron-pages id="pages"
+        role="main"
+        selected="[[routeData.page]]"
+        selected-attribute="active"
+        attr-for-selected="name"
+        fallback-selection="shows">
+      <show-list-page name="shows" subroute="[[subroute]]"></show-list-page>
+      <show-video-page name="video" subroute="[[subroute]]"></show-video-page>
+    </iron-pages>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'show-app',
+
+      listeners: {
+        'setup-toolbar': '_setupToolbar'
+      },
+
+      attached: function() {
+        this.listen(window, 'location-changed', '_onLocationChange');
+      },
+
+      _setupToolbar: function(e) {
+        this.$.leftItem.onclick = e.detail.leftItemClickAction;
+
+        if (e.detail.leftItemIcon) {
+          this.$.leftItem.setAttribute('icon', e.detail.leftItemIcon);
+        } else {
+          this.$.leftItem.removeAttribute('icon');
+        }
+      },
+
+      _onLocationChange: function() {
+        this.$.pages.selectedItem.backAction = function() {
+          window.history.back();
+        };
+      }
+
+    });
+
+  </script>
+</dom-module>

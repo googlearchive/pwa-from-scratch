@@ -1,0 +1,90 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+
+<dom-module id="show-video-page">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+      }
+
+      .video-frame {
+        background-color: black;
+        height: calc(100vh-64px);
+      }
+
+    </style>
+
+    <div class="video-frame">
+      <google-youtube
+          width="100%"
+          height="calc(100vh - 64px)"
+          video-id="[[videoId]]"
+          rel="0"
+          start="5"
+          autoplay="1"></google-youtube>
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'show-video-page',
+
+      properties: {
+
+        active: {
+          type: Boolean,
+          observer: '_activeDidChange'
+        },
+
+        subroute: Object,
+
+        videoId: {
+          type: String,
+          computed: '_getVideoId(subroute)'
+        },
+
+        backAction: {
+          type: Function,
+          value: function() {
+            return function() {
+              window.location.href = '/';
+            };
+          }
+        }
+      },
+
+      _getVideoId: function(subroute) {
+        return subroute && subroute.path ? subroute.path.substr(1) : '';
+      },
+
+      _leftItemClicked: function() {
+        this.backAction();
+      },
+
+      _activeDidChange: function(active) {
+        if (active) {
+          this.fire('setup-toolbar', {
+            leftItemIcon: 'arrow-back',
+            leftItemClickAction: this._leftItemClicked.bind(this)
+          });
+        }
+      }
+
+    });
+
+  </script>
+</dom-module>

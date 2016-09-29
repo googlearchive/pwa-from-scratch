@@ -1,0 +1,318 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+
+<dom-module id="show-list-page">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+        max-width: 800px;
+        margin: auto;
+      }
+
+      app-drawer {
+        white-space: nowrap;
+        margin-left: 56px;
+        --app-drawer-width: 200px;
+        --app-drawer-content-container: {
+          background-color: transparent;
+        }
+      }
+
+      .grid-item {
+        width: 50%;
+        height: 40vh;
+      }
+
+      .grid-item > a {
+        margin: 10px;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        background-color: black;
+        border: 1px solid black;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        display: flex;
+        align-items: flex-end;
+        text-decoration: none;
+      }
+
+      .title {
+        font-size: 15px;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        background-color: black;
+        width: 100%;
+      }
+
+      .loading-indicator {
+        font-size: 15px;
+        line-height: 120px;
+        color: #aaa;
+        font-weight: 100;
+        text-align: center;
+        opacity: 1;
+      }
+
+      .loading-indicator[off] {
+        opacity: 0;
+      }
+
+      .nav {
+        padding-top: 100px;
+        text-align: right;
+        list-style: none;
+        padding-right: 20px;
+        height: 100%;
+      }
+
+      .nav a {
+        color: #c0c0c0;
+        text-decoration: none;
+        font-weight: 300;
+        line-height: 32px;
+        font-size: 14px;
+        display: inline-block;
+        transform-origin: right center;
+        transition: transform 0.2s;
+      }
+
+      .nav a:hover {
+        color: #dfdfdf;
+        transform: scale3d(1.2, 1.2, 1);
+      }
+
+      .active a {
+        color: white;
+        font-weight: bold;
+      }
+
+      .nav h2 {
+        color: white;
+        font-weight: 100;
+        font-size: 12px;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        margin: 32px 0;
+        color: #666;
+      }
+
+      #list {
+        min-height: 100vh;
+      }
+
+      @media (max-width: 640px) {
+        .grid-item {
+          width: 100%;
+          height: 40vh;
+        }
+      }
+
+      @media (max-width: 1280px) {
+        app-drawer {
+          margin-left: 0;
+          z-index: 1;
+        }
+
+        .nav {
+          background-color: black;
+        }
+      }
+
+    </style>
+
+    <iron-ajax
+        auto
+        url="https://www.googleapis.com/youtube/v3/search?part=snippet&q=[[show.q]]&channelId=UCnUYZLuoy1rq1aVMwx4aTzw&order=date&maxResults=20&pageToken=[[pageToken]]&key=AIzaSyA053VCd78p0v2Pica01W_ljGUSAfzl0vA"
+        handle-as="json"
+        on-response="_onXhrResponse"></iron-ajax>
+
+    <iron-media-query
+        query="max-width: 1280px"
+        query-matches="{{smallScreen}}"></iron-media-query>
+
+    <app-drawer opened="{{openedDrawer}}" persistent="[[persistentDrawer]]">
+      <ul class="nav" role="navigation">
+        <h2>Shows</h2>
+        <iron-selector selected="[[show.subroute]]" attr-for-selected="name" selected-class="active">
+          <template is="dom-repeat" items="[[shows]]" as="show">
+            <li name="[[show.subroute]]"><a href="/shows/[[show.subroute]]">[[show.name]]</a></li>
+          </template>
+        </iron-selector>
+      </ul>
+    </app-drawer>
+
+    <iron-list id="list" scroll-target="document" items="[[items]]" grid>
+      <template>
+        <div class="grid-item">
+          <a href="/video/[[item.id.videoId]]" style$="background-image:url([[item.snippet.thumbnails.high.url]]);">
+            <div class="title">[[item.snippet.title]]</div>
+          </a>
+        </div>
+      </template>
+    </iron-list>
+
+    <div class="loading-indicator" off$="[[lastPage]]">More videos to come...</div>
+
+    <iron-scroll-threshold
+        id="scrollThreshold"
+        scroll-target="document"
+        lower-threshold="0"
+        on-lower-threshold="_onLowerThreshold"></iron-scroll-threshold>
+
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'show-list-page',
+
+      properties: {
+
+        active: Boolean,
+
+        subroute: Object,
+
+        shows: {
+          type: Array,
+          value: function() {
+            return [
+              { name: 'All', subroute: 'all', q: '' },
+              { name: 'Polycasts', subroute: 'polycast', q: 'polycasts' },
+              { name: 'Totally Tooling Tips', subroute: 'tips', q: 'totally tooling' },
+              { name: 'A11ycasts', subroute: 'a11ycasts', q: 'a11ycasts' },
+              { name: 'Supercharged', subroute: 'supercharged', q: 'supercharged' }
+            ];
+          }
+        },
+
+        show: {
+          type: Object,
+          computed: '_getActiveShow(shows, subroute)',
+          observer: '_showDidChange'
+        },
+
+        items: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        nextPageToken: String,
+
+        pageToken: {
+          type: String,
+          value: ''
+        },
+
+        lastPage: Boolean,
+
+        currentShow: String,
+
+        openedDrawer: {
+          type: Boolean,
+          value: true
+        },
+
+        persistentDrawer: {
+          type: Boolean,
+          value: true
+        },
+
+        smallScreen: Boolean
+
+      },
+
+      observers: [
+        '_updateToolbar(active, smallScreen)'
+      ],
+
+      _itemSizes: {},
+
+      _onXhrResponse: function(e) {
+        var response = e.detail.response;
+        var items = response.items;
+
+        if (items.length === 0) {
+          this.lastPage = true;
+        } else {
+          if (this.currentShow != this.show) {
+            this.set('items', []);
+          }
+
+          this.totalResults = response.pageInfo.totalResults;
+
+          if (!response.nextPageToken) {
+            this.lastPage = true;
+          } else {
+            this.nextPageToken = response.nextPageToken;
+          }
+          this.currentShow = this.show;
+
+          items.forEach(function(item) {
+            this.push('items', item);
+          }, this);
+        }
+        this.$.scrollThreshold.clearTriggers();
+      },
+
+      _onLowerThreshold: function() {
+        this.pageToken = this.nextPageToken;
+      },
+
+      _getActiveShow: function(shows, subroute) {
+        var key = subroute.path ? subroute.path.substr(1) : 'all';
+        var res = shows.filter(function(show) { return show.subroute == key; });
+        return res[0] ? res[0] : shows[0];
+      },
+
+      _didReachEnd: function(totalResults, itemsLength) {
+        return itemsLength >= totalResults;
+      },
+
+      _showDidChange: function() {
+        this.pageToken = '';
+        this.lastPage = false;
+        this.openedDrawer = this.persistentDrawer;
+      },
+
+      _updateToolbar: function(active, smallScreen) {
+        if (active) {
+          this.fire('setup-toolbar', {
+            leftItemIcon: smallScreen ? 'menu' : '',
+            leftItemClickAction: this._leftItemClicked.bind(this)
+          });
+        }
+
+        this.persistentDrawer = !smallScreen;
+        this.openedDrawer = !smallScreen;
+      },
+
+      _leftItemClicked: function() {
+        this.openedDrawer = true;
+      }
+
+    });
+
+  </script>
+</dom-module>
