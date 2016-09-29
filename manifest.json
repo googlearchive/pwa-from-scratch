@@ -1,7 +1,22 @@
 {
-  "name": "Show app",
-  "short_name": "Show app",
+  "name": "Chrome Developer Channel",
+  "short_name": "Dev Channel",
   "description": "Shows for web developers",
-  "start_url": "/",
-  "display": "standalone"
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#000",
+  "theme_color": "#000",
+  "icons": [{
+      "src": "images/chrome-logo.svg",
+      "sizes": "128x128",
+      "type": "image/svg"
+    }, {
+      "src": "images/chrome-logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg"
+    },{
+      "src": "images/chrome-logo.svg",
+      "sizes": "384x384",
+      "type": "image/svg"
+  }]
 }

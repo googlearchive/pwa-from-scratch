@@ -2,8 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/show-app/show-app.html",
   "fragments": [
-    "src/show-app/show-list-page.html",
-    "src/show-app/show-video-page.html"
+    "src/show-app/lazy-resources.html"
   ],
   "sourceGlobs": [
    "src/**/*",
@@ -12,6 +11,7 @@
   ],
   "includeDependencies": [
     "manifest.json",
+    "images/*",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

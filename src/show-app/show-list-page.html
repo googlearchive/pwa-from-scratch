@@ -1,11 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 
 <dom-module id="show-list-page">
   <template>
@@ -54,12 +54,17 @@
         width: 100%;
       }
 
-      .loading {
+      .loading-indicator {
         font-size: 15px;
         line-height: 120px;
         color: #aaa;
         font-weight: 100;
         text-align: center;
+        opacity: 1;
+      }
+
+      .loading-indicator[off] {
+        opacity: 0;
       }
 
       .nav {
@@ -101,8 +106,8 @@
         color: #666;
       }
 
-      [faded] {
-        visibility: hidden;
+      #list {
+        min-height: 100vh;
       }
 
       @media (max-width: 640px) {
@@ -146,7 +151,7 @@
       </ul>
     </app-drawer>
 
-    <iron-list scroll-target="document" items="[[items]]" grid item-size="_itemSize" on-iron-resize="_onListResize">
+    <iron-list id="list" scroll-target="document" items="[[items]]" grid>
       <template>
         <div class="grid-item">
           <a href="/video/[[item.id.videoId]]" style$="background-image:url([[item.snippet.thumbnails.high.url]]);">
@@ -156,13 +161,13 @@
       </template>
     </iron-list>
 
-    <div class="loading" faded$="[[lastPage]]">More videos to come...</div>
+    <div class="loading-indicator" off$="[[lastPage]]">More videos to come...</div>
 
     <iron-scroll-threshold
         id="scrollThreshold"
         scroll-target="document"
         lower-threshold="0"
-        on-lower-threshold="_loadMoreVideos"></iron-scroll-threshold>
+        on-lower-threshold="_onLowerThreshold"></iron-scroll-threshold>
 
   </template>
 
@@ -262,7 +267,7 @@
         this.$.scrollThreshold.clearTriggers();
       },
 
-      _loadMoreVideos: function() {
+      _onLowerThreshold: function() {
         this.pageToken = this.nextPageToken;
       },
 
@@ -292,24 +297,10 @@
 
         this.persistentDrawer = !smallScreen;
         this.openedDrawer = !smallScreen;
-        this._itemSizes = {};
       },
 
       _leftItemClicked: function() {
         this.openedDrawer = true;
-      },
-
-      _itemSize: function(node, isHeight) {
-        if (isHeight) {
-          this._itemSizes.height = this._itemSizes.height || node.offsetHeight;
-          return this._itemSizes.height;
-        }
-        this._itemSizes.width = this._itemSizes.width || node.offsetWidth;
-        return this._itemSizes.width;
-      },
-
-      _onListResize: function() {
-        this._itemSizes = {};
       }
 
     });

@@ -47,6 +47,17 @@
         background-color: black;
         background-image: linear-gradient(to bottom, rgb(0, 0, 0) 0%, rgb(50, 50, 50) 50%, rgb(0, 0, 0) 100%);
         background-attachment: fixed;
+        font-family: 'Roboto', 'Noto', sans-serif;
+      }
+
+      .nojs {
+        width: 100vw;
+        height: 100vh;
+        color: white;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
     </style>
@@ -54,6 +65,15 @@
   <body>
 
     <show-app></show-app>
+
+    <noscript>
+      <div class="nojs">
+        <div>
+          <img src="/images/chrome-logo.svg" width="50" height="50">
+          <p>Please enable javascript to access the channel</p>
+        </div>
+      </div>
+    </noscript>
 
   </body>
 </html>
