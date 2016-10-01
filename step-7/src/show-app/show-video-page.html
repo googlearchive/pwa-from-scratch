@@ -1,0 +1,62 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+
+<dom-module id="show-video-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .video-frame {
+        background-color: black;
+        height: calc(100vh-64px);
+      }
+    </style>
+
+    <div class="video-frame">
+      <google-youtube
+         width="100%"
+         height="calc(100vh - 64px)"
+         video-id="[[videoId]]"
+         rel="0"
+         start="5"
+         autoplay="1"></google-youtube>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'show-video-page',
+
+      properties: {
+        subroute: Object,
+
+        videoId: {
+          type: String,
+          computed: '_getVideoId(subroute)'
+        },
+
+        active: {
+          type: Boolean,
+          observer: '_activeDidChange'
+        }
+      },
+
+      _getVideoId: function(subroute) {
+        return subroute && subroute.path ? subroute.path.substr(1) : '';
+      },
+
+      _activeDidChange: function(active) {
+        if (active) {
+          this.fire('setup-toolbar', {
+            leftItemIcon: 'arrow-back',
+            leftItemClickAction: function() { window.history.back(); }
+          });
+        }
+      }
+
+    });
+  </script>
+</dom-module>

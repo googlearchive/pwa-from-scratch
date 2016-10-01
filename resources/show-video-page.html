@@ -1,10 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="{element-name}">
+<dom-module id="show-video-page">
   <template>
     <style>
       :host {
         display: block;
+      }
+      .video-frame {
+        background-color: black;
+        height: calc(100vh-64px);
       }
     </style>
 
@@ -12,7 +16,13 @@
 
   <script>
     Polymer({
-      is: '{element-name}'
+
+      is: 'show-video-page',
+
+      properties: {
+
+      }
+
     });
   </script>
 </dom-module>

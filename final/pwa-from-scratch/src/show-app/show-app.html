@@ -6,13 +6,12 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="show-icons.html">
 <link rel="import" href="show-list-page.html">
-<link rel="import" href="show-video-page.html">
 
 <dom-module id="show-app">
   <template>
     <style>
+
       :host {
         --paper-icon-button-ink-color: white;
         display: block;
@@ -84,10 +83,12 @@
         .title {
           font-size: 10px;
         }
+
         [threshold-triggered] .chrome-logo {
           transform: translateX(120px) rotateZ(360deg);
         }
       }
+
     </style>
 
     <app-location route="{{route}}"></app-location>
@@ -101,7 +102,6 @@
       <app-toolbar>
         <paper-icon-button id="leftItem"></paper-icon-button>
         <a href="/" title="Developer Channel">
-          <!-- svg logo -->
           <svg class="chrome-logo" width="30" height="30" xmlns="http://www.w3.org/2000/svg" viewBox="15.5 15.5 224.5 224.5">
             <defs>
               <radialGradient cy="0" cx="0.5" id="r">
@@ -145,16 +145,15 @@
         selected="[[routeData.page]]"
         selected-attribute="active"
         attr-for-selected="name"
-        fallback-selection="show">
-      <show-list-page name="show"
-          subroute="[[subroute]]"></show-list-page>
-      <show-video-page name="watch"
-          subroute="[[subroute]]"></show-video-page>
+        fallback-selection="shows">
+      <show-list-page name="shows" subroute="[[subroute]]"></show-list-page>
+      <show-video-page name="video" subroute="[[subroute]]"></show-video-page>
     </iron-pages>
 
   </template>
 
   <script>
+
     Polymer({
 
       is: 'show-app',
@@ -163,15 +162,30 @@
         'setup-toolbar': '_setupToolbar'
       },
 
+      attached: function() {
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.importHref(this.resolveUrl('lazy-resources.html'));
+        });
+        this.listen(window, 'location-changed', '_onLocationChange');
+      },
+
       _setupToolbar: function(e) {
         this.$.leftItem.onclick = e.detail.leftItemClickAction;
+
         if (e.detail.leftItemIcon) {
           this.$.leftItem.setAttribute('icon', e.detail.leftItemIcon);
         } else {
           this.$.leftItem.removeAttribute('icon');
         }
+      },
+
+      _onLocationChange: function() {
+        this.$.pages.selectedItem.backAction = function() {
+          window.history.back();
+        };
       }
 
     });
+
   </script>
 </dom-module>
